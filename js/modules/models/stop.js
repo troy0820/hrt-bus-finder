@@ -1,5 +1,5 @@
-module.exports = function() {
-  return Backbone.Model.extend({
-    idAttribute: "_id"
-  });
-};
+var Stop = Backbone.Model.extend({
+  idAttribute: "_id"
+});
+
+module.exports = Stop;

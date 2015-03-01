@@ -1,78 +1,20 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-require('./busfinder');
+/* global require */
+'use strict';
 
+var Arrival = require('./models/arrival');
 var Stop = require('./models/stop');
 
-},{"./busfinder":2,"./models/stop":3}],2:[function(require,module,exports){
+var ArrivalList = require('./collections/arrivalList');
+debugger;
+
+require('./busfinder');
+
+},{"./busfinder":2,"./collections/arrivalList":3,"./models/arrival":4,"./models/stop":5}],2:[function(require,module,exports){
 $(function(){
 
 	var SNOW_ROUTES = false;
-
-	var Arrival = Backbone.Model.extend({
-		idAttribute: "_id",
-
-		date: function() {
-			return new Date(Date.parseUtc(this.get('arrival_time')));
-		},
-
-		localTime: function() {
-			return this.date().to12HourString();
-		},
-
-		minutesFromNow: function() {
-			var arriveTime = this.date();
-			if(this.get('busAdherence')) {
-				arriveTime = arriveTime.addMinutes(this.get('busAdherence') * -1);
-			}
-
-			var arriveTimeFromNow = new Date(arriveTime - new Date().getTime());
-			return (arriveTimeFromNow.getTime() / 1000 / 60 | 0);
-		},
-
-		adherenceDescription: function() {
-			if(!this.has('busAdherence'))
-		        return 'scheduled';
-
-		    var adherence = this.get('busAdherence');
-		    if(adherence > 0)
-    		    return adherence + ' min early';
-			if(adherence < 0)
-				return (adherence * -1) + ' min late';
-			return 'on time'
-		},
-
-		lastCheckinTimeDescription: function() {
-		    if(!this.has('busCheckinTime'))
-		        return '';
-
-		    var date = new Date(Date.parseUtc(this.get('busCheckinTime')));
-			var timePassed = new Date(new Date().getTime() - date).getTime() / 1000 / 60 | 0;
-
-			if (timePassed == 0)
-			    return 'just now';
-			else if (timePassed == 1)
-			    return '1 minute ago';
-
-			return timePassed + ' minutes ago';
-		}
-	});
-
-	var Stop = Backbone.Model.extend({
-		idAttribute: "_id"
-	});
-
 	var API_URL = 'http://lit-inlet-3610.herokuapp.com/api/'
-	var ArrivalList = Backbone.Collection.extend({
-		model: Arrival,
-
-		comparator: function(arrival) {
-		    return arrival.minutesFromNow();
-        },
-
-		url: function() {
-			return API_URL + 'stop_times/' + this.stopId + '/';
-		}
-	});
 
 	var StopList = Backbone.Collection.extend({
 		url: function() {
@@ -892,10 +834,86 @@ $(function(){
 });
 
 },{}],3:[function(require,module,exports){
-module.exports = function() {
-  return Backbone.Model.extend({
-    idAttribute: "_id"
-  });
-};
+var Arrival = require('../models/arrival');
+
+var ArrivalList = Backbone.Collection.extend({
+  model: Arrival,
+
+  comparator: function(arrival) {
+    return arrival.minutesFromNow();
+  },
+
+  url: function() {
+    return API_URL + 'stop_times/' + this.stopId + '/';
+  }
+});
+
+module.exports = ArrivalList;
+
+},{"../models/arrival":4}],4:[function(require,module,exports){
+'use strict';
+/* global require, Backbone, module */
+// Arrival Model.
+
+var Arrival = Backbone.Model.extend({
+  idAttribute: "_id",
+
+  date: function() {
+    return new Date(Date.parseUtc(this.get('arrival_time')));
+  },
+
+  localTime: function() {
+    return this.date().to12HourString();
+  },
+
+  minutesFromNow: function() {
+    var arriveTime = this.date();
+    if(this.get('busAdherence')) {
+      arriveTime = arriveTime.addMinutes(this.get('busAdherence') * -1);
+    }
+
+    var arriveTimeFromNow = new Date(arriveTime - new Date().getTime());
+    return (arriveTimeFromNow.getTime() / 1000 / 60 | 0);
+  },
+
+  adherenceDescription: function() {
+    if(!this.has('busAdherence'))
+          return 'scheduled';
+
+      var adherence = this.get('busAdherence');
+      if (adherence > 0) {
+          return adherence + ' min early';
+      }
+      if (adherence < 0) {
+        return (adherence * -1) + ' min late';
+      } else {
+        return 'on time';
+      }
+  },
+
+  lastCheckinTimeDescription: function() {
+      if(!this.has('busCheckinTime'))
+          return '';
+
+      var date = new Date(Date.parseUtc(this.get('busCheckinTime')));
+    var timePassed = new Date(new Date().getTime() - date).getTime() / 1000 / 60 | 0;
+
+    if (timePassed === 0)
+        return 'just now';
+    else if (timePassed === 1)
+        return '1 minute ago';
+
+    return timePassed + ' minutes ago';
+  }
+});
+
+module.exports = Arrival;
+
+},{}],5:[function(require,module,exports){
+var Stop = Backbone.Model.extend({
+  idAttribute: "_id"
+});
+
+module.exports = Stop;
 
 },{}]},{},[1,2]);
