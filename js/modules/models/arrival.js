@@ -1,5 +1,5 @@
 'use strict';
-/* global require, Backbone, module */
+/* global require, module */
 // Arrival Model.
 
 var Arrival = Backbone.Model.extend({

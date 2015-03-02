@@ -1,15 +1,14 @@
-module.exports = (function() {
+'use strict';
 
-  return Backbone.Collection.extend({
-    url: function() {
-        if(this.location) {
-            return API_URL + 'stops/near/' + this.location.lat() + '/' + this.location.lng() + '/';
-        }
+var StopList = Backbone.Collection.extend({
+  url: function() {
+      if(this.location) {
+          return API_URL + 'stops/near/' + this.location.lat() + '/' + this.location.lng() + '/';
+      }
+      if(this.stopIds){
+          return API_URL + 'stops/id/' + this.stopIds + '/';
+      }
+  }
+});
 
-        if(this.stopIds){
-            return API_URL + 'stops/id/' + this.stopIds + '/';
-        }
-    }
-  });
-
-}());
+module.exports = StopList;

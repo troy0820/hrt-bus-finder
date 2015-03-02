@@ -1,6 +1,6 @@
 module.exports = (function() {
 
-  function(onLocated) {
+  var locateUser = function(onLocated) {
 
       var onFail = function() {
           onLocated(DowntownNorfolk);

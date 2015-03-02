@@ -1,4 +1,4 @@
-var Arrival = require('../models/arrival');
+'use strict';
 
 var ArrivalList = Backbone.Collection.extend({
   model: Arrival,

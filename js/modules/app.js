@@ -4,6 +4,9 @@
 var SNOW_ROUTES = false;
 var API_URL = 'http://lit-inlet-3610.herokuapp.com/api/';
 
+var _ = require('underscore');
+var Backbone = require('Backbone');
+
 // Models
 var Arrival = require('./models/arrival');
 var Stop = require('./models/stop');
